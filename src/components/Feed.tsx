@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
 import { mockPosts } from '../lib/data';
 import PhotoCard from './PhotoCard';
+import PromptCard from './PromptCard';
 import type { Post } from '../lib/types';
 import Spinner from './Spinner';
 
@@ -51,9 +52,14 @@ const Feed: FC = () => {
   return (
     <div className="w-full">
       <div className="space-y-6">
-        {posts.map(post => (
-          <PhotoCard key={post.id} post={post} />
-        ))}
+        {posts.map(post => {
+          if (post.type === 'photo') {
+            return <PhotoCard key={post.id} post={post} />;
+          } else if (post.type === 'prompt') {
+            return <PromptCard key={post.id} post={post} />;
+          }
+          return null;
+        })}
       </div>
       <div ref={loader} className="h-4" />
       {loading && (
