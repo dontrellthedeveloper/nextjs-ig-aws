@@ -55,3 +55,13 @@ a:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
+
+/* Hide scrollbar for stories */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

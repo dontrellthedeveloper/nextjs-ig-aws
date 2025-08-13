@@ -25,3 +25,11 @@ export interface User {
   avatar: string;
   isFollowed: boolean;
 }
+
+
+export interface Story {
+  id: number;
+  username: string;
+  avatar: string;
+  isSeen: boolean;
+}
