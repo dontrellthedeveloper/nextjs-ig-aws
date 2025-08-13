@@ -49,12 +49,18 @@ const Feed: FC = () => {
   }, [loader, loading, posts]);
 
   return (
-    <div className="w-full max-w-md">
-      {posts.map(post => (
-        <PhotoCard key={post.id} post={post} />
-      ))}
-      <div ref={loader} />
-      {loading && <Spinner />}
+    <div className="w-full max-w-lg mx-auto px-4 sm:px-0">
+      <div className="space-y-6">
+        {posts.map(post => (
+          <PhotoCard key={post.id} post={post} />
+        ))}
+      </div>
+      <div ref={loader} className="h-4" />
+      {loading && (
+        <div className="flex justify-center py-8">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 };
