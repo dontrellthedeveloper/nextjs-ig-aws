@@ -10,10 +10,10 @@ const HomePage: NextPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen font-sans">
       <Navbar />
-      <div className="flex pt-16">
+      <div className="flex pt-20">
         <Sidebar />
-        <main className="flex-1 flex justify-center">
-          <div className="py-8">
+        <main className="flex-1 flex justify-center px-4 md:px-0">
+          <div className="py-8 w-full max-w-lg">
             <Feed />
           </div>
         </main>

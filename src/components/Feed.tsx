@@ -49,7 +49,7 @@ const Feed: FC = () => {
   }, [loader, loading, posts]);
 
   return (
-    <div className="w-full max-w-lg mx-auto px-4 sm:px-0">
+    <div className="w-full">
       <div className="space-y-6">
         {posts.map(post => (
           <PhotoCard key={post.id} post={post} />

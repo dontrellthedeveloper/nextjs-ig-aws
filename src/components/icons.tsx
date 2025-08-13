@@ -31,7 +31,11 @@ export const UploadIcon: FC = () => (
 );
 
 export const ProfileIcon: FC<{ avatarUrl: string }> = ({ avatarUrl }) => (
-    <img src={avatarUrl} alt="Profile" className="w-6 h-6 rounded-full object-cover" />
+    <img 
+      src={avatarUrl} 
+      alt="Profile" 
+      className="w-8 h-8 rounded-full object-cover ring-2 ring-transparent hover:ring-gray-300 transition-all duration-200" 
+    />
 );
 
 export const HeartIcon: FC<{ isLiked: boolean }> = ({ isLiked }) => (

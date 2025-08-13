@@ -8,10 +8,12 @@ export interface Comment {
 
 export interface Post {
   id: number;
+  type: 'photo' | 'prompt';
   username: string;
   avatar: string;
-  imageUrl: string;
-  caption: string;
+  imageUrl?: string;
+  caption?: string;
+  content?: string;
   likes: number;
   comments: Comment[];
   timestamp: string;
