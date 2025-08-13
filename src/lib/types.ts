@@ -16,3 +16,10 @@ export interface Post {
   comments: Comment[];
   timestamp: string;
 }
+
+export interface User {
+  id: number;
+  username: string;
+  avatar: string;
+  isFollowed: boolean;
+}

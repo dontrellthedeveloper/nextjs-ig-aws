@@ -3,6 +3,7 @@
 import type { NextPage } from 'next';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import RightSidebar from '../components/RightSidebar';
 import Feed from '../components/Feed';
 
 const HomePage: NextPage = () => {
@@ -16,6 +17,7 @@ const HomePage: NextPage = () => {
             <Feed />
           </div>
         </main>
+        <RightSidebar />
       </div>
     </div>
   );
