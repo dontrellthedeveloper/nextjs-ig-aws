@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, FC } from 'react';
 import type { Post } from '../lib/types';
 import { HeartIcon, CommentIcon, ShareIcon } from './icons';
@@ -20,7 +21,7 @@ const PhotoCard: FC<{ post: Post }> = ({ post }) => {
     <div className="bg-white border border-gray-200 rounded-lg mb-6 overflow-hidden">
       <div className="flex items-center p-3">
         <img src={post.avatar} alt={post.username} className="w-9 h-9 rounded-full object-cover" />
-        <span className="ml-3 font-semibold text-sm text-gray-800">{post.username}</span>
+        <Link href={`/users/${post.username}`}><span className="ml-3 font-semibold text-sm text-gray-800">{post.username}</span></Link>
       </div>
       <img src={post.imageUrl} alt="User post" className="w-full h-auto object-cover" />
       <div className="p-3">
@@ -31,7 +32,7 @@ const PhotoCard: FC<{ post: Post }> = ({ post }) => {
         </div>
         <p className="font-semibold text-sm mt-2">{likes.toLocaleString()} likes</p>
         <p className="text-sm mt-1">
-          <span className="font-semibold mr-2">{post.username}</span>
+          <Link href={`/users/${post.username}`}><span className="font-semibold mr-2">{post.username}</span></Link>
           {post.caption}
         </p>
         <div className="mt-2 text-sm text-gray-600">
@@ -40,7 +41,7 @@ const PhotoCard: FC<{ post: Post }> = ({ post }) => {
           )}
           {post.comments.slice(0, 1).map((comment, index) => (
             <p key={index} className="mt-1">
-              <span className="font-semibold mr-2">{comment.username}</span>
+              <Link href={`/users/${comment.username}`}><span className="font-semibold mr-2">{comment.username}</span></Link>
               {comment.text}
             </p>
           ))}

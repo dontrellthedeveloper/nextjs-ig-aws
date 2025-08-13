@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import Link from 'next/link';
 import { mockUsers } from '../lib/users';
 import type { User } from '../lib/types';
 
@@ -17,10 +18,12 @@ const RightSidebar: FC = () => {
       <div>
         {users.map(user => (
           <div key={user.id} className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <img src={user.avatar} alt={user.username} className="w-10 h-10 rounded-full object-cover" />
-              <span className="ml-3 font-semibold text-sm text-gray-800">{user.username}</span>
-            </div>
+            <Link href={`/users/${user.username}`}>
+              <div className="flex items-center">
+                <img src={user.avatar} alt={user.username} className="w-10 h-10 rounded-full object-cover" />
+                <span className="ml-3 font-semibold text-sm text-gray-800">{user.username}</span>
+              </div>
+            </Link>
             <button 
               onClick={() => handleFollowToggle(user.id)}
               className={`text-xs font-semibold ${user.isFollowed ? 'text-gray-500' : 'text-blue-500'}`}>
