@@ -9,7 +9,7 @@ const HomePage: NextPage = () => {
     <div className="bg-gray-50 min-h-screen font-sans">
       <Navbar />
       <main className="pt-16 flex justify-center">
-        <div className="py-8 px-4 w-full">
+        <div className="py-8">
           <Feed />
         </div>
       </main>
