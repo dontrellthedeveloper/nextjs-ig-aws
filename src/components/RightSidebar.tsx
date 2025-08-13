@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { mockUsers } from '../lib/users';
 import type { User } from '../lib/types';
@@ -25,13 +25,15 @@ interface Activity {
 }
 
 const RightSidebar: FC = () => {
-  const [users, setUsers] = useState<SuggestedUser[]>(
-    mockUsers.map(user => ({
+  const [users, setUsers] = useState<SuggestedUser[]>(mockUsers);
+
+  useEffect(() => {
+    setUsers(mockUsers.map(user => ({
       ...user,
       mutualFriends: Math.floor(Math.random() * 15) + 1,
       reason: ['Suggested for you', 'Popular', 'Followed by friends', 'New to Social'][Math.floor(Math.random() * 4)]
-    }))
-  );
+    })))
+  }, [])
 
   const [trendingTopics] = useState<TrendingTopic[]>([
     { id: 1, hashtag: '#TechTrends2024', posts: 12500, growth: 15.2 },
