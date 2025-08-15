@@ -146,7 +146,7 @@ const Sidebar: FC = () => {
 
         {/* Profile Section */}
         <div className="border-t border-gray-100 pt-4">
-          <Link href="/profile" className="group">
+          <Link href="/profile" className={`group ${pathname === '/profile' ? 'bg-blue-50' : ''}`}>
             <div className="flex items-center px-3 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
               <div className="relative">
                 <ProfileIcon avatarUrl="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face" />
