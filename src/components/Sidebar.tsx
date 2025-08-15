@@ -1,5 +1,6 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   HomeIcon,
   ExploreIcon,
@@ -61,11 +62,11 @@ const NavItem: FC<NavItemProps> = ({ href, icon, label, isActive = false, badge,
 };
 
 const Sidebar: FC = () => {
-  const [activeNav] = useState('home');
+  const pathname = usePathname();
 
   const mainNavItems = [
-    { id: 'home', href: '/', icon: <HomeIcon />, label: 'Home', isActive: activeNav === 'home' },
-    { id: 'explore', href: '/explore', icon: <ExploreIcon />, label: 'Explore' },
+    { id: 'home', href: '/', icon: <HomeIcon />, label: 'Home', isActive: pathname === '/' },
+    { id: 'explore', href: '/explore', icon: <ExploreIcon />, label: 'Explore', isActive: pathname === '/explore' },
     { id: 'streams', href: '/streams', icon: <StreamsIcon />, label: 'Streams', badge: 3, isNew: true },
     { id: 'maps', href: '/maps', icon: <MapsIcon />, label: 'Maps' },
     { id: 'events', href: '/events', icon: <EventsIcon />, label: 'Events', badge: 12 },

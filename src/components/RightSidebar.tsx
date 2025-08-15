@@ -35,6 +35,17 @@ const RightSidebar: FC = () => {
     })))
   }, [])
 
+  const mockUserImages = [
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=150&h=150&fit=crop&crop=face'
+  ]
+
   const [trendingTopics] = useState<TrendingTopic[]>([
     { id: 1, hashtag: '#TechTrends2024', posts: 12500, growth: 15.2 },
     { id: 2, hashtag: '#SocialGood', posts: 8900, growth: 23.1 },
@@ -139,7 +150,7 @@ const RightSidebar: FC = () => {
                 <Link href={`/users/${user.username}`} className="flex items-center flex-1 min-w-0">
                   <div className="relative flex-shrink-0">
                     <img 
-                      src={`https://images.unsplash.com/photo-${1500000000000 + user.id}?w=150&h=150&fit=crop&crop=face`}
+                      src={mockUserImages[user.id % mockUserImages.length]}
                       alt={user.username} 
                       className="w-12 h-12 rounded-full object-cover ring-2 ring-transparent group-hover:ring-gray-200 transition-all duration-200" 
                     />
