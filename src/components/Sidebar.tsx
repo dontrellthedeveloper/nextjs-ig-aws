@@ -75,7 +75,7 @@ const Sidebar: FC = () => {
 
   const secondaryNavItems = [
     { id: 'messages', href: '/messages', icon: <MessagesIcon />, label: 'Messages', badge: 5, isActive: pathname === '/messages' },
-    { id: 'notifications', href: '/notifications', icon: <NotificationsIcon />, label: 'Notifications', badge: 8 },
+    { id: 'notifications', href: '/notifications', icon: <NotificationsIcon />, label: 'Notifications', badge: 8, isActive: pathname === '/notifications' },
     { id: 'shop', href: '/shop', icon: <ShopIcon />, label: 'Shop', isNew: true },
     { id: 'bookmarks', href: '/bookmarks', icon: <BookmarksIcon />, label: 'Bookmarks' },
   ];
