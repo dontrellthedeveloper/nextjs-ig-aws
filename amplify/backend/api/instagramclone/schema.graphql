@@ -1,4 +1,130 @@
-# This "input" configures a global authorization rule to enable public access to
-# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+# Social Media App GraphQL Schema
+# This schema defines the data model for an Instagram-like social media application
+
+# User model - represents app users
+type User @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  cognitoId: String! @index(name: "byCognitoId")
+  username: String! @index(name: "byUsername")
+  email: String!
+  name: String
+  bio: String
+  website: String
+  profilePictureKey: String
+  
+  # Relationships
+  posts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+  followers: [Follow] @hasMany(indexName: "byFollowing", fields: ["id"])
+  following: [Follow] @hasMany(indexName: "byFollower", fields: ["id"])
+  stories: [Story] @hasMany(indexName: "byUser", fields: ["id"])
+  likes: [Like] @hasMany(indexName: "byUser", fields: ["id"])
+  comments: [Comment] @hasMany(indexName: "byUser", fields: ["id"])
+  storyViews: [StoryView] @hasMany(indexName: "byUser", fields: ["id"])
+  
+  # Counters (denormalized for performance)
+  postsCount: Int @default(value: "0")
+  followersCount: Int @default(value: "0")
+  followingCount: Int @default(value: "0")
+  
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+# Post model - represents user posts/photos
+type Post @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  description: String
+  imageKey: String!
+  imageUrl: String
+  location: String
+  tags: [String]
+  
+  # Relationships
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+  likes: [Like] @hasMany(indexName: "byPost", fields: ["id"])
+  comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
+  
+  # Performance counters
+  likesCount: Int @default(value: "0")
+  commentsCount: Int @default(value: "0")
+  
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+# Like model - junction table for post likes
+type Like @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  postId: ID! @index(name: "byPost")
+  userId: ID! @index(name: "byUser")
+  post: Post @belongsTo(fields: ["postId"])
+  user: User @belongsTo(fields: ["userId"])
+  createdAt: AWSDateTime!
+}
+
+# Comment model - represents post comments
+type Comment @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  content: String!
+  postId: ID! @index(name: "byPost", sortKeyFields: ["createdAt"])
+  userId: ID! @index(name: "byUser")
+  post: Post @belongsTo(fields: ["postId"])
+  user: User @belongsTo(fields: ["userId"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+# Follow model - represents user follows (social graph)
+type Follow @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  followerId: ID! @index(name: "byFollower")
+  followingId: ID! @index(name: "byFollowing")
+  follower: User @belongsTo(fields: ["followerId"])
+  following: User @belongsTo(fields: ["followingId"])
+  createdAt: AWSDateTime!
+}
+
+# Story model - represents 24-hour stories
+type Story @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["expiresAt"])
+  user: User @belongsTo(fields: ["userId"])
+  imageKey: String
+  videoKey: String
+  viewers: [StoryView] @hasMany(indexName: "byStory", fields: ["id"])
+  expiresAt: AWSDateTime!
+  createdAt: AWSDateTime!
+}
+
+# StoryView model - tracks who viewed stories
+type StoryView @model @auth(rules: [
+  { allow: owner },
+  { allow: private, operations: [read] }
+]) {
+  id: ID!
+  storyId: ID! @index(name: "byStory")
+  userId: ID! @index(name: "byUser")
+  story: Story @belongsTo(fields: ["storyId"])
+  user: User @belongsTo(fields: ["userId"])
+  createdAt: AWSDateTime!
+}
 
