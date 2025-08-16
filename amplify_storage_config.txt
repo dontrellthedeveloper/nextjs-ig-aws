@@ -1,0 +1,13 @@
+To add S3 storage manually:
+
+1. Run: amplify storage add
+2. Select: Content (Images, audio, video, etc.)
+3. Provide a friendly name: instagramclonestorage
+4. Provide bucket name: instagramclone-storage-[unique-id]
+5. Who should have access: Auth users only
+6. What kind of access: Auth users - read/write
+7. Do you want to add a Lambda Trigger: No
+
+Then run: amplify push
+
+For now, we'll use a mock upload function.
