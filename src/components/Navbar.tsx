@@ -1,11 +1,16 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { HomeIcon, UploadIcon, ProfileIcon, SearchIcon, MessagesIcon, NotificationsIcon } from './icons';
 
 const Navbar: FC = () => {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -22,6 +27,19 @@ const Navbar: FC = () => {
     };
   }, []);
 
+  const handleSignOut = async () => {
+    try {
+      setIsSigningOut(true);
+      setIsProfileDropdownOpen(false);
+      await signOut();
+      router.push('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 backdrop-blur-md bg-white/95">
       <div className="max-w-6xl mx-auto px-4">
@@ -30,9 +48,14 @@ const Navbar: FC = () => {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
-                <span className="text-white font-bold text-sm">IG</span>
+                <span className="text-white font-bold text-sm">S</span>
               </div>
-              <h1 className="text-xl font-bold text-gray-900 hidden sm:block font-serif tracking-tight">Instagram</h1>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-bold text-gray-900 font-serif tracking-tight">Social</h1>
+                {user && (
+                  <p className="text-xs text-gray-500">Welcome, {user.username}</p>
+                )}
+              </div>
             </Link>
           </div>
 
@@ -72,6 +95,27 @@ const Navbar: FC = () => {
 
           {/* Right Navigation */}
           <div className="flex items-center space-x-1">
+            {/* Quick Sign Out Button for Testing */}
+            <button
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Quick sign out for testing"
+            >
+              {isSigningOut ? (
+                <>
+                  <div className="w-3 h-3 border border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span>Signing out...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Sign Out</span>
+                </>
+              )}
+            </button>
             {/* Home */}
             <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 group">
               <HomeIcon />
@@ -150,16 +194,23 @@ const Navbar: FC = () => {
                   </Link>
                   <hr className="my-1" />
                   <button
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    onClick={() => {
-                      setIsProfileDropdownOpen(false);
-                      // Add logout logic here
-                    }}
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                    onClick={handleSignOut}
+                    disabled={isSigningOut}
                   >
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Log out
+                    {isSigningOut ? (
+                      <>
+                        <div className="w-4 h-4 mr-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                        Signing out...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Log out
+                      </>
+                    )}
                   </button>
                 </div>
               )}
