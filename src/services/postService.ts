@@ -116,13 +116,7 @@ class PostService {
             location: input.location || '',
             tags,
             likesCount: 0,
-            commentsCount: 0,
-            // Additional metadata could be stored here
-            metadata: JSON.stringify({
-              altText: input.altText,
-              hideLikes: input.hideLikes,
-              disableComments: input.disableComments
-            })
+            commentsCount: 0
           }
         }
       });
