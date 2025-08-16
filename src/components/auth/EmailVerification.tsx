@@ -5,12 +5,13 @@ import { useAuth } from '../../contexts/AuthContext';
 
 interface EmailVerificationProps {
   email: string;
+  password?: string;
   onSuccess: () => void;
   onBack: () => void;
 }
 
-export default function EmailVerification({ email, onSuccess, onBack }: EmailVerificationProps) {
-  const { confirmSignUp, resendConfirmationCode } = useAuth();
+export default function EmailVerification({ email, password, onSuccess, onBack }: EmailVerificationProps) {
+  const { confirmSignUp, resendConfirmationCode, signIn } = useAuth();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -32,10 +33,38 @@ export default function EmailVerification({ email, onSuccess, onBack }: EmailVer
       const result = await confirmSignUp(email, code);
       
       if (result.success) {
-        setSuccess('Email verified successfully!');
-        setTimeout(() => {
-          onSuccess();
-        }, 1000);
+        setSuccess('Email verified successfully! Signing you in...');
+        
+        // Auto sign-in if password is provided
+        if (password) {
+          try {
+            const signInResult = await signIn(email, password);
+            if (signInResult.success) {
+              // Small delay for UX before redirecting
+              setTimeout(() => {
+                onSuccess();
+              }, 500);
+            } else {
+              // If auto sign-in fails, still call onSuccess to redirect to login
+              setSuccess('Email verified! Please sign in.');
+              setTimeout(() => {
+                onSuccess();
+              }, 1500);
+            }
+          } catch (signInError) {
+            console.error('Auto sign-in failed:', signInError);
+            // Still proceed even if auto sign-in fails
+            setSuccess('Email verified! Please sign in.');
+            setTimeout(() => {
+              onSuccess();
+            }, 1500);
+          }
+        } else {
+          // No password provided, just proceed
+          setTimeout(() => {
+            onSuccess();
+          }, 1000);
+        }
       } else {
         setError(result.error || 'Failed to verify email');
       }
@@ -111,7 +140,7 @@ export default function EmailVerification({ email, onSuccess, onBack }: EmailVer
               if (error) setError('');
               if (success) setSuccess('');
             }}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg tracking-wider"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg tracking-wider text-gray-900 placeholder-gray-400"
             placeholder="Enter 6-digit code"
             maxLength={6}
           />

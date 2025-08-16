@@ -125,7 +125,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
             required
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="Enter your email"
           />
         </div>
@@ -141,7 +141,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
             required
             value={formData.password}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="Enter your password"
           />
         </div>

@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { signOut, getCurrentUser } from 'aws-amplify/auth';
 
 interface SignupFormProps {
-  onSuccess?: (email: string) => void;
+  onSuccess?: (email: string, password: string) => void;
   onSwitchToLogin?: () => void;
 }
 
@@ -18,6 +19,7 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,15 +75,61 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
     setError('');
 
     try {
+      // First, forcefully clear any existing session
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          console.log('Found existing user, signing out...');
+          await signOut({ global: true });
+          // Clear all storage
+          localStorage.clear();
+          sessionStorage.clear();
+          // Wait a bit for sign out to complete
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      } catch (e) {
+        // No user signed in, continue
+        console.log('No existing user found, proceeding with signup');
+      }
+
       const result = await signUp(formData.email, formData.password, formData.username);
       
       if (result.success) {
-        onSuccess?.(formData.email);
+        // For testing: Show success and auto-redirect to login
+        setSuccess('Account created successfully! Redirecting to sign in...');
+        setError('');
+        
+        // Auto switch to login after a short delay
+        setTimeout(() => {
+          onSwitchToLogin?.();
+        }, 2000);
       } else {
         setError(result.error || 'Failed to create account');
       }
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+      console.error('Signup error:', err);
+      
+      // If it's the "already signed in" error, provide clearer instructions
+      if (err.message?.includes('already a signed in user') || err.message?.includes('already signed in')) {
+        setError('A user is already signed in. Please clear your browser cache (Cmd+Shift+R on Mac or Ctrl+Shift+R on Windows) and try again.');
+        
+        // Try one more aggressive clear
+        try {
+          await signOut({ global: true });
+          localStorage.clear();
+          sessionStorage.clear();
+          // Suggest reload
+          setTimeout(() => {
+            if (window.confirm('Would you like to reload the page to clear the session?')) {
+              window.location.reload();
+            }
+          }, 1000);
+        } catch (clearError) {
+          console.error('Failed to clear session:', clearError);
+        }
+      } else {
+        setError(err.message || 'An unexpected error occurred');
+      }
     } finally {
       setLoading(false);
     }
@@ -107,6 +155,13 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h1>
         <p className="text-gray-600">Join our community and start sharing</p>
       </div>
+
+      {/* Success Message */}
+      {success && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-600 text-sm">{success}</p>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
@@ -164,7 +219,7 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
             required
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="Enter your email"
           />
         </div>
@@ -180,7 +235,7 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
             required
             value={formData.username}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="Choose a username"
           />
           <p className="text-xs text-gray-500 mt-1">
@@ -199,7 +254,7 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
             required
             value={formData.password}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="Create a password"
           />
           <p className="text-xs text-gray-500 mt-1">
@@ -218,7 +273,7 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
             required
             value={formData.confirmPassword}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="Confirm your password"
           />
         </div>
@@ -271,6 +326,28 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
             Sign in
           </button>
         </p>
+      </div>
+
+      {/* Debug: Clear Session Button (temporary for testing) */}
+      <div className="mt-4 text-center">
+        <button
+          type="button"
+          onClick={async () => {
+            try {
+              await signOut({ global: true });
+              localStorage.clear();
+              sessionStorage.clear();
+              window.location.reload();
+            } catch (e) {
+              localStorage.clear();
+              sessionStorage.clear();
+              window.location.reload();
+            }
+          }}
+          className="text-xs text-gray-500 hover:text-gray-700 underline"
+        >
+          Clear session (for testing)
+        </button>
       </div>
     </div>
   );

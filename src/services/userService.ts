@@ -1,4 +1,8 @@
-import { client, createUser, updateUser, getUser, getUserByCognitoId, getUserByUsername } from '../lib/graphql';
+import { generateClient } from 'aws-amplify/api';
+import * as mutations from '../graphql/mutations';
+import * as queries from '../graphql/queries';
+
+const client = generateClient();
 
 export interface CreateUserInput {
   cognitoId: string;
@@ -41,7 +45,7 @@ class UserService {
   async createUserProfile(input: CreateUserInput): Promise<UserProfile | null> {
     try {
       const response = await client.graphql({
-        query: createUser,
+        query: mutations.createUser,
         variables: {
           input: {
             cognitoId: input.cognitoId,
@@ -70,7 +74,7 @@ class UserService {
   async updateUserProfile(input: UpdateUserInput): Promise<UserProfile | null> {
     try {
       const response = await client.graphql({
-        query: updateUser,
+        query: mutations.updateUser,
         variables: {
           input: {
             id: input.id,
@@ -96,7 +100,7 @@ class UserService {
   async getUserProfile(id: string): Promise<UserProfile | null> {
     try {
       const response = await client.graphql({
-        query: getUser,
+        query: queries.getUser,
         variables: { id }
       });
 
@@ -113,11 +117,11 @@ class UserService {
   async getUserProfileByCognitoId(cognitoId: string): Promise<UserProfile | null> {
     try {
       const response = await client.graphql({
-        query: getUserByCognitoId,
+        query: queries.usersByCognitoId,
         variables: { cognitoId, limit: 1 }
       });
 
-      const users = response.data.getUsersByCognitoId?.items || [];
+      const users = response.data.usersByCognitoId?.items || [];
       return users.length > 0 ? users[0] as UserProfile : null;
     } catch (error) {
       console.error('Error getting user profile by Cognito ID:', error);
@@ -131,11 +135,11 @@ class UserService {
   async getUserProfileByUsername(username: string): Promise<UserProfile | null> {
     try {
       const response = await client.graphql({
-        query: getUserByUsername,
+        query: queries.usersByUsername,
         variables: { username, limit: 1 }
       });
 
-      const users = response.data.getUsersByUsername?.items || [];
+      const users = response.data.usersByUsername?.items || [];
       return users.length > 0 ? users[0] as UserProfile : null;
     } catch (error) {
       console.error('Error getting user profile by username:', error);

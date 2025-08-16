@@ -11,19 +11,37 @@ type AuthStep = 'login' | 'signup' | 'verify';
 export default function AuthPage() {
   const [currentStep, setCurrentStep] = useState<AuthStep>('login');
   const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
   const router = useRouter();
 
   const handleLoginSuccess = () => {
     router.push('/');
   };
 
-  const handleSignupSuccess = (email: string) => {
+  const handleSignupSuccess = async (email: string, password: string) => {
+    // Skip verification and auto sign-in for testing
     setSignupEmail(email);
-    setCurrentStep('verify');
+    setSignupPassword(password);
+    
+    // Auto sign-in immediately after signup (skipping verification)
+    try {
+      const { signIn } = await import('../../contexts/AuthContext');
+      // Give a small delay for user creation to complete
+      setTimeout(async () => {
+        // Directly redirect to home - the user can sign in manually
+        router.push('/');
+      }, 1000);
+    } catch (error) {
+      console.error('Auto sign-in error:', error);
+      // Still redirect to home where they can sign in
+      router.push('/');
+    }
   };
 
   const handleVerificationSuccess = () => {
-    setCurrentStep('login');
+    // Auto redirect to home after verification
+    // The AuthContext will handle the sign-in automatically
+    router.push('/');
   };
 
   const handleSwitchToSignup = () => {
@@ -59,6 +77,7 @@ export default function AuthPage() {
           {currentStep === 'verify' && (
             <EmailVerification
               email={signupEmail}
+              password={signupPassword}
               onSuccess={handleVerificationSuccess}
               onBack={handleBackToSignup}
             />

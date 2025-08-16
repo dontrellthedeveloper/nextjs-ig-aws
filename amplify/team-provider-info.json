@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-instagramclone-dev-2f2bc-unauthRole",
       "StackName": "amplify-instagramclone-dev-2f2bc",
       "StackId": "arn:aws:cloudformation:us-west-1:895826105507:stack/amplify-instagramclone-dev-2f2bc/c48d8580-78dd-11f0-ae04-06df6c0ac85f",
-      "AmplifyAppId": "db2pg2jrhla2s"
+      "AmplifyAppId": "db2pg2jrhla2s",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-instagramclone-dev-2f2bc-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {

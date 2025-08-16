@@ -145,6 +145,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSignUp = async (email: string, password: string, username: string) => {
     try {
+      // Check if there's a signed-in user and sign them out first
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          console.log('Signing out existing user before signup');
+          await signOut({ global: true });
+          // Clear cached data
+          if (typeof window !== 'undefined') {
+            localStorage.clear();
+            sessionStorage.clear();
+          }
+          // Small delay to ensure sign out completes
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      } catch (checkError) {
+        // No user signed in, continue with signup
+      }
+
       const { nextStep } = await signUp({
         username: email,
         password,
@@ -163,6 +181,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     } catch (error: any) {
       console.error('Sign up error:', error);
+      
+      // Handle specific error cases
+      if (error.message?.includes('already a signed in user')) {
+        // Try to clear the session and retry
+        try {
+          await signOut({ global: true });
+          if (typeof window !== 'undefined') {
+            localStorage.clear();
+            sessionStorage.clear();
+          }
+          return { 
+            success: false, 
+            error: 'Please refresh the page and try again. A user was already signed in.' 
+          };
+        } catch (signOutError) {
+          console.error('Failed to sign out existing user:', signOutError);
+        }
+      }
+      
       return { 
         success: false, 
         error: error.message || 'Failed to create account' 
@@ -212,10 +249,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await signOut({ global: true });
       setUser(null);
+      // Clear any cached data
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
     } catch (error: any) {
       console.error('Sign out error:', error);
+      // Even if sign out fails, clear local state
+      setUser(null);
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
       throw new Error(error.message || 'Failed to sign out');
     }
   };
