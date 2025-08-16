@@ -9,7 +9,8 @@ import {
   confirmSignUp,
   resendSignUpCode,
   signInWithRedirect,
-  fetchAuthSession
+  fetchAuthSession,
+  fetchUserAttributes
 } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
 
@@ -99,18 +100,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const session = await fetchAuthSession();
       
       if (currentUser && session) {
+        // Fetch user attributes to get preferred_username and other details
+        const userAttributes = await fetchUserAttributes();
+        
         const userData: User = {
           userId: currentUser.userId,
           username: currentUser.username,
-          email: currentUser.signInDetails?.loginId || '',
-          emailVerified: currentUser.signInDetails?.loginId ? true : false,
+          email: userAttributes.email || currentUser.signInDetails?.loginId || '',
+          emailVerified: userAttributes.email_verified === 'true',
           attributes: {
-            email: currentUser.signInDetails?.loginId || '',
-            email_verified: true,
+            email: userAttributes.email || '',
+            email_verified: userAttributes.email_verified === 'true',
             sub: currentUser.userId,
-            ...currentUser
+            preferred_username: userAttributes.preferred_username,
+            given_name: userAttributes.given_name,
+            family_name: userAttributes.family_name,
+            ...userAttributes
           }
         };
+        
+        console.log('User data:', userData); // Debug log
         setUser(userData);
       } else {
         setUser(null);

@@ -53,7 +53,9 @@ const Navbar: FC = () => {
               <div className="hidden sm:block">
                 <h1 className="text-xl font-bold text-gray-900 font-serif tracking-tight">Social</h1>
                 {user && (
-                  <p className="text-xs text-gray-500">Welcome, {user.username}</p>
+                  <p className="text-xs text-gray-500">
+                    Welcome, {user.attributes?.preferred_username || user.username || user.email}
+                  </p>
                 )}
               </div>
             </Link>
