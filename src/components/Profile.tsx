@@ -206,7 +206,7 @@ const Profile: FC = () => {
             {/* Username and Actions */}
             <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-normal">{profileData.username}</h1>
+                <h1 className="text-xl font-normal text-gray-900">{profileData.username}</h1>
                 {profileData.isVerified && (
                   <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
@@ -215,10 +215,10 @@ const Profile: FC = () => {
               </div>
               
               <div className="flex items-center gap-2">
-                <button className="px-8 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-sm transition-colors">
+                <button className="px-8 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-sm text-gray-900 transition-colors">
                   Edit profile
                 </button>
-                <button className="px-8 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-sm transition-colors">
+                <button className="px-8 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-sm text-gray-900 transition-colors">
                   View archive
                 </button>
                 <Link href="/settings" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -233,34 +233,34 @@ const Profile: FC = () => {
             {/* Stats */}
             <div className="flex items-center gap-8 mb-6">
               <div>
-                <span className="font-semibold">{profileData.stats.posts.toLocaleString()}</span>
-                <span className="text-gray-900 ml-1">posts</span>
+                <span className="font-semibold text-gray-900">{profileData.stats.posts.toLocaleString()}</span>
+                <span className="text-gray-700 ml-1">posts</span>
               </div>
               <button 
                 onClick={() => setShowFollowers(true)}
                 className="hover:opacity-75 transition-opacity"
               >
-                <span className="font-semibold">{formatNumber(profileData.stats.followers)}</span>
-                <span className="text-gray-900 ml-1">followers</span>
+                <span className="font-semibold text-gray-900">{formatNumber(profileData.stats.followers)}</span>
+                <span className="text-gray-700 ml-1">followers</span>
               </button>
               <button 
                 onClick={() => setShowFollowing(true)}
                 className="hover:opacity-75 transition-opacity"
               >
-                <span className="font-semibold">{profileData.stats.following.toLocaleString()}</span>
-                <span className="text-gray-900 ml-1">following</span>
+                <span className="font-semibold text-gray-900">{profileData.stats.following.toLocaleString()}</span>
+                <span className="text-gray-700 ml-1">following</span>
               </button>
             </div>
 
             {/* Bio */}
             <div className="space-y-1">
-              <h2 className="font-semibold">{profileData.fullName}</h2>
-              <div className="whitespace-pre-line text-sm">{profileData.bio}</div>
+              <h2 className="font-semibold text-gray-900">{profileData.fullName}</h2>
+              <div className="whitespace-pre-line text-sm text-gray-700">{profileData.bio}</div>
               <a 
                 href={`https://${profileData.website}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-blue-900 font-semibold hover:underline inline-block"
+                className="text-sm text-blue-600 font-semibold hover:underline inline-block"
               >
                 {profileData.website}
               </a>
@@ -279,7 +279,7 @@ const Profile: FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
-                <span className="text-xs font-medium">New</span>
+                <span className="text-xs font-medium text-gray-700">New</span>
               </div>
             </button>
 
@@ -296,7 +296,7 @@ const Profile: FC = () => {
                       />
                     </div>
                   </div>
-                  <span className="text-xs font-medium">{highlight.title}</span>
+                  <span className="text-xs font-medium text-gray-700">{highlight.title}</span>
                 </div>
               </button>
             ))}
@@ -451,7 +451,7 @@ const Profile: FC = () => {
               </svg>
             )}
           </div>
-          <h3 className="text-2xl font-light mb-2">No {activeTab} Yet</h3>
+          <h3 className="text-2xl font-light mb-2 text-gray-900">No {activeTab} Yet</h3>
         </div>
       )}
     </div>
