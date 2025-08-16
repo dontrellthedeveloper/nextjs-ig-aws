@@ -1,0 +1,115 @@
+type User @model 
+  @auth(rules: [
+    { allow: owner },
+    { allow: private, operations: [read] }
+  ]) {
+  id: ID!
+  cognitoId: String! @index(name: "byCognitoId")
+  username: String! @index(name: "byUsername") 
+  email: String!
+  name: String
+  bio: String
+  website: String
+  profilePictureKey: String
+  
+  posts: [Post] @hasMany
+  followers: [Follow] @hasMany(indexName: "byFollower", fields: ["id"])
+  following: [Follow] @hasMany(indexName: "byFollowing", fields: ["id"])
+  stories: [Story] @hasMany
+  
+  postsCount: Int @default(value: "0")
+  followersCount: Int @default(value: "0")
+  followingCount: Int @default(value: "0")
+  
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Post @model 
+  @auth(rules: [
+    { allow: owner },
+    { allow: private, operations: [read] }
+  ]) {
+  id: ID!
+  description: String
+  imageKey: String!
+  imageUrl: String
+  location: String
+  tags: [String]
+  
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+  
+  likes: [Like] @hasMany
+  comments: [Comment] @hasMany
+  
+  likesCount: Int @default(value: "0")
+  commentsCount: Int @default(value: "0")
+  
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Like @model 
+  @auth(rules: [
+    { allow: owner },
+    { allow: private, operations: [read] }
+  ]) {
+  id: ID!
+  postId: ID! @index(name: "byPost")
+  userId: ID! @index(name: "byUser")
+  post: Post @belongsTo(fields: ["postId"])
+  user: User @belongsTo(fields: ["userId"])
+  createdAt: AWSDateTime!
+}
+
+type Comment @model 
+  @auth(rules: [
+    { allow: owner },
+    { allow: private, operations: [read] }
+  ]) {
+  id: ID!
+  content: String!
+  postId: ID! @index(name: "byPost", sortKeyFields: ["createdAt"])
+  userId: ID!
+  post: Post @belongsTo(fields: ["postId"])
+  user: User @belongsTo(fields: ["userId"])
+  createdAt: AWSDateTime!
+}
+
+type Follow @model 
+  @auth(rules: [
+    { allow: owner },
+    { allow: private, operations: [read] }
+  ]) {
+  id: ID!
+  followerId: ID! @index(name: "byFollower")
+  followingId: ID! @index(name: "byFollowing")
+  follower: User @belongsTo(fields: ["followerId"])
+  following: User @belongsTo(fields: ["followingId"])
+  createdAt: AWSDateTime!
+}
+
+type Story @model 
+  @auth(rules: [
+    { allow: owner },
+    { allow: private, operations: [read] }
+  ]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["expiresAt"])
+  user: User @belongsTo(fields: ["userId"])
+  imageKey: String
+  videoKey: String
+  viewers: [StoryView] @hasMany
+  expiresAt: AWSDateTime!
+  createdAt: AWSDateTime!
+}
+
+type StoryView @model {
+  id: ID!
+  storyId: ID! @index(name: "byStory")
+  userId: ID! @index(name: "byUser")
+  story: Story @belongsTo(fields: ["storyId"])
+  user: User @belongsTo(fields: ["userId"])
+  viewedAt: AWSDateTime!
+}

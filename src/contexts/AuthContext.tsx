@@ -13,12 +13,14 @@ import {
   fetchUserAttributes
 } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
+import { userService, UserProfile } from '../services/userService';
 
 export interface User {
   userId: string;
   username: string;
   email: string;
   emailVerified: boolean;
+  profile?: UserProfile | null;
   attributes: {
     email: string;
     email_verified: boolean;
@@ -103,11 +105,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Fetch user attributes to get preferred_username and other details
         const userAttributes = await fetchUserAttributes();
         
+        // Create or sync user profile in database
+        const userProfile = await userService.createOrSyncUserProfile({
+          userId: currentUser.userId,
+          username: currentUser.username,
+          email: userAttributes.email || currentUser.signInDetails?.loginId || '',
+          attributes: userAttributes
+        });
+        
         const userData: User = {
           userId: currentUser.userId,
           username: currentUser.username,
           email: userAttributes.email || currentUser.signInDetails?.loginId || '',
           emailVerified: userAttributes.email_verified === 'true',
+          profile: userProfile,
           attributes: {
             email: userAttributes.email || '',
             email_verified: userAttributes.email_verified === 'true',
