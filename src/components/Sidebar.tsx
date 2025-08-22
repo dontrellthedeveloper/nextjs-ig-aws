@@ -5,7 +5,6 @@ import {
   HomeIcon,
   ExploreIcon,
   StreamsIcon,
-  MapsIcon,
   EventsIcon,
   CommunityIcon,
   ShopIcon,
@@ -68,7 +67,6 @@ const Sidebar: FC = () => {
     { id: 'home', href: '/', icon: <HomeIcon />, label: 'Home', isActive: pathname === '/' },
     { id: 'explore', href: '/explore', icon: <ExploreIcon />, label: 'Explore', isActive: pathname === '/explore' },
     { id: 'streams', href: '/streams', icon: <StreamsIcon />, label: 'Streams', badge: 3, isNew: true },
-    { id: 'maps', href: '/maps', icon: <MapsIcon />, label: 'Maps' },
     { id: 'events', href: '/events', icon: <EventsIcon />, label: 'Events', badge: 12 },
     { id: 'community', href: '/community', icon: <CommunityIcon />, label: 'Community' },
   ];
